@@ -1,0 +1,13 @@
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\PF3-UI.csprojAssemblyReference.cache
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\staticwebassets\PF3-UI.StaticWebAssets.Manifest.cache
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\staticwebassets\PF3-UI.StaticWebAssets.xml
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\PF3-UI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\PF3-UI.RazorComponent.input.cache
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\RazorDeclaration\App.razor.g.cs
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\RazorDeclaration\Pages\Counter.razor.g.cs
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\RazorDeclaration\Pages\Error.razor.g.cs
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\RazorDeclaration\Pages\FetchData.razor.g.cs
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\RazorDeclaration\Pages\Index.razor.g.cs
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\RazorDeclaration\Shared\MainLayout.razor.g.cs
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\RazorDeclaration\Shared\NavMenu.razor.g.cs
+C:\Users\nathan.schultz.CAPRICORN\source\repos\csharp\PF3-UI\obj\Debug\netcoreapp3.0\RazorDeclaration\_Imports.razor.g.cs
