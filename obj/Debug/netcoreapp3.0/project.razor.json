@@ -62,6 +62,55 @@
       },
       {
         "Kind": "Components.Component",
+        "Name": "PF3_UI.Pages.Amortisation",
+        "AssemblyName": "PF3-UI",
+        "Documentation": null,
+        "TagOutputHint": null,
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "Amortisation",
+            "ParentTag": null,
+            "TagStructure": 0,
+            "Attributes": [],
+            "Diagnostics": []
+          }
+        ],
+        "BoundAttributes": [],
+        "AllowedChildTags": [],
+        "Diagnostics": [],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "PF3_UI.Pages.Amortisation"
+        }
+      },
+      {
+        "Kind": "Components.Component",
+        "Name": "PF3_UI.Pages.Amortisation",
+        "AssemblyName": "PF3-UI",
+        "Documentation": null,
+        "TagOutputHint": null,
+        "CaseSensitive": true,
+        "TagMatchingRules": [
+          {
+            "TagName": "PF3_UI.Pages.Amortisation",
+            "ParentTag": null,
+            "TagStructure": 0,
+            "Attributes": [],
+            "Diagnostics": []
+          }
+        ],
+        "BoundAttributes": [],
+        "AllowedChildTags": [],
+        "Diagnostics": [],
+        "Metadata": {
+          "Runtime.Name": "Components.IComponent",
+          "Common.TypeName": "PF3_UI.Pages.Amortisation",
+          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
+        }
+      },
+      {
+        "Kind": "Components.Component",
         "Name": "PF3_UI.Pages.Counter",
         "AssemblyName": "PF3-UI",
         "Documentation": null,
