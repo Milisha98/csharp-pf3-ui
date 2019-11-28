@@ -1,25 +1,85 @@
 @page "/amortisation"
-@using PF3_UI.Model;
 @using PF3_UI.Mortgage;
-@using PF3_UI.Mortgage.Events;
+
 
 <h1>Amortisation</h1>
 
-<div class="container">
-    <div class="row">
-        <label for="txtBalance" class="col-sm-1">Balance:</label>
-        <input id="txtBalance" type="text" class="col-sm-2" value="@model.Balance" @oninput="@(e => Update(new SetBalance(e)))" />
-        <p>@model.Balance</p>
-    </div>
-</div>  
+<div class="row">
+    <label for="txtBalance" class="col-sm-2">Balance</label>
+    <input id="txtBalance" type="text" class="col-sm-1" @bind:event="oninput" @bind="@ViewBalance" />
+</div>
+
+<div class="row">
+    <label for="txtInterest" class="col-sm-2">Interest</label>
+    <input id="txtInterest" type="text" class="col-sm-1" @bind:event="oninput" @bind="@ViewInterest" />
+</div>
+
+<div class="row">
+    <label for="cboYear" class="col-sm-2">Years</label>
+    <select name="cboYear" id="cboYear" @bind="@ViewYears" class="col-sm-1">
+        <option value=30>30 Years</option>
+        <option value=25>25 Years</option>
+        <option value=20>20 Years</option>
+        <option value=15>15 Years</option>
+        <option value=10>10 Years</option>
+        <option value=5>5 Years</option>
+    </select>
+</div>
+
+<div class="row">
+    <label class="col-sm-2" for="cboPeriod">Required Repayment</label>
+    <span class="col-sm-1">@model.RequiredRepayment.ToString("c")</span>
+    <select name="cboPeriod" id="cboPeriod" @bind="@ViewPeriod" class="col-sm-2">
+        <option value=12>Per Month</option>
+        <option value=26>Per Fortnight</option>
+        <option value=52>Per Week</option>
+    </select>    
+</div>
+
+<div class="row">
+    <label for="txtBalance" class="col-sm-2">Actual Repayment</label>
+    <input id="txtBalance" type="text" class="col-sm-1" @bind:event="oninput" @bind="@ViewActualRepayment" />
+    @if (ShowRepaymentWarning) 
+    {
+        <div class="alert alert-danger" role="alert">
+            <span>This should be at least @(model.RequiredRepayment.ToString("c"))</span>
+        </div>
+    }
+</div>
 
 @code {
-    private MortgageUI model = new MortgageUI();
+    private Model model = new Model();
 
-    private async void Update(IUpdateEvent e)
-    {        
-        model = MortgageUpdate.Update(model, e);
-        await Task.Delay(1);
-        StateHasChanged();
+    public string ViewBalance
+    {
+        get => model.Balance.ToString("c0");
+        set => model = model.UpdateBalance(value);
     }
+
+    public string ViewInterest
+    {
+        get => $"{model.Interest.ToString("0.00")}%";
+        set => model = model.UpdateInterest(value);
+    }
+
+    public int ViewYears
+    {
+        get => model.Years;
+        set => model = model.UpdateYears(value);
+    }
+
+    public int ViewPeriod
+    {
+        get => (int)model.Period;
+        set => model = model.UpdatePeriod(value);
+    }
+
+    public string ViewActualRepayment
+    {
+        get => model.ActualRepayment.ToString("c0");
+        set => model = model.UpdateActualRepayment(value);
+    }
+
+    public bool ShowRepaymentWarning => model.ActualRepayment > 0m && model.RequiredRepayment > model.ActualRepayment;
+
 }
