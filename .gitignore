@@ -1,0 +1,6 @@
+*/bin
+*/obj
+elm.js
+.ionide/symbolCache.db
+db.lock
+storage.ide

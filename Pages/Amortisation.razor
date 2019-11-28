@@ -1,0 +1,25 @@
+@page "/amortisation"
+@using PF3_UI.Model;
+@using PF3_UI.Mortgage;
+@using PF3_UI.Mortgage.Events;
+
+<h1>Amortisation</h1>
+
+<div class="container">
+    <div class="row">
+        <label for="txtBalance" class="col-sm-1">Balance:</label>
+        <input id="txtBalance" type="text" class="col-sm-2" value="@model.Balance" @oninput="@(e => Update(new SetBalance(e)))" />
+        <p>@model.Balance</p>
+    </div>
+</div>  
+
+@code {
+    private MortgageUI model = new MortgageUI();
+
+    private async void Update(IUpdateEvent e)
+    {        
+        model = MortgageUpdate.Update(model, e);
+        await Task.Delay(1);
+        StateHasChanged();
+    }
+}

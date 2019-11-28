@@ -160,55 +160,6 @@
       },
       {
         "Kind": "Components.Component",
-        "Name": "PF3_UI.Pages.FetchData",
-        "AssemblyName": "PF3-UI",
-        "Documentation": null,
-        "TagOutputHint": null,
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "FetchData",
-            "ParentTag": null,
-            "TagStructure": 0,
-            "Attributes": [],
-            "Diagnostics": []
-          }
-        ],
-        "BoundAttributes": [],
-        "AllowedChildTags": [],
-        "Diagnostics": [],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "PF3_UI.Pages.FetchData"
-        }
-      },
-      {
-        "Kind": "Components.Component",
-        "Name": "PF3_UI.Pages.FetchData",
-        "AssemblyName": "PF3-UI",
-        "Documentation": null,
-        "TagOutputHint": null,
-        "CaseSensitive": true,
-        "TagMatchingRules": [
-          {
-            "TagName": "PF3_UI.Pages.FetchData",
-            "ParentTag": null,
-            "TagStructure": 0,
-            "Attributes": [],
-            "Diagnostics": []
-          }
-        ],
-        "BoundAttributes": [],
-        "AllowedChildTags": [],
-        "Diagnostics": [],
-        "Metadata": {
-          "Runtime.Name": "Components.IComponent",
-          "Common.TypeName": "PF3_UI.Pages.FetchData",
-          "Components.NameMatch": "Components.FullyQualifiedNameMatch"
-        }
-      },
-      {
-        "Kind": "Components.Component",
         "Name": "PF3_UI.Pages.Index",
         "AssemblyName": "PF3-UI",
         "Documentation": null,
@@ -14775,6 +14726,11 @@
       "FileKind": "component"
     },
     {
+      "FilePath": "c:\\Users\\nathan.schultz.CAPRICORN\\source\\repos\\csharp\\PF3-UI\\Pages\\Amortisation.razor",
+      "TargetPath": "Pages\\Amortisation.razor",
+      "FileKind": "component"
+    },
+    {
       "FilePath": "c:\\Users\\nathan.schultz.CAPRICORN\\source\\repos\\csharp\\PF3-UI\\Pages\\Counter.razor",
       "TargetPath": "Pages\\Counter.razor",
       "FileKind": "component"
@@ -14802,11 +14758,6 @@
     {
       "FilePath": "c:\\Users\\nathan.schultz.CAPRICORN\\source\\repos\\csharp\\PF3-UI\\Pages\\Index.razor",
       "TargetPath": "Pages\\Index.razor",
-      "FileKind": "component"
-    },
-    {
-      "FilePath": "c:\\Users\\nathan.schultz.CAPRICORN\\source\\repos\\csharp\\PF3-UI\\Pages\\FetchData.razor",
-      "TargetPath": "Pages\\FetchData.razor",
       "FileKind": "component"
     },
     {
