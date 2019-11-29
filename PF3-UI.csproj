@@ -5,4 +5,10 @@
     <RootNamespace>PF3_UI</RootNamespace>
   </PropertyGroup>
 
+    <ItemGroup>
+     <Reference Include="PF3">
+       <HintPath>..\PF3\PF3\bin\Debug\netcoreapp3.0\PF3.dll</HintPath>
+     </Reference>
+    </ItemGroup>
+
 </Project>
