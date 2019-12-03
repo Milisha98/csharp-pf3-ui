@@ -1,5 +1,10 @@
 @page "/amortisation"
 @using PF3_UI.Mortgage;
+@using PF3.EndPoints;
+@using PF3.Enums;
+@using PF3.Models;
+@using PF3.Mutators;
+@using PF3.Time;
 
 
 <h1>Amortisation</h1>
@@ -48,7 +53,62 @@
     
 </div>
 
+<div class="row">
+    <button @onclick="@CalculateSchedule">Calculate Schedule</button>
+</div>
+
+<!-- Display the Results -->
+@if (vm.PublishMessages?.Any() == true)
+{
+<div class="container">
+    @foreach (var row in vm.PublishMessages)
+    {
+        <div class="row">
+            <div class="col-sm-2">@(row.When.ToString("MMM-yyyy"))</div>
+            <div class="col-sm-1">@(row.Balance.ToString("c"))</div>
+        </div>
+    }
+</div>
+}
+
 @code {
     private ViewModel vm = new ViewModel();
 
+    private void CalculateSchedule()
+    {
+            var balanceAmount = (float)vm.Model.Balance;
+            var repaymentAmount = (float)vm.Model.ActualRepayment;
+            var interestRate = (float)vm.Model.Interest / 100f;
+            var accountName = "Mortgage";
+
+            ITime period;
+            switch (vm.Model.PaymentPeriod)
+            {
+                case Mortgage.Period.Weekly:
+                    period = new WeekPeriod();
+                    break;
+                case Mortgage.Period.Fortnightly:
+                    period = new WeekPeriod(2);
+                    break;
+                default:
+                    period = new MonthPeriod();
+                    break;
+            }
+
+            // Patterns
+            var interest = new PercentCreditMutator("Interest", accountName, new DayPeriod(), DateTime.Today, DateTime.MaxValue, (interestRate / 365f), 10, TransactionType.Interest);
+            var repayment = new FixedDebitMutator("Repayment", accountName, period, DateTime.Today, DateTime.MaxValue, repaymentAmount, 5, TransactionType.Payment);
+            var mutators = new List<IMutator> { interest, repayment };
+
+            // Construct Entities
+            var pattern = new PublishPattern(new MonthPeriod(), DateTime.Now);
+            var ep = new DebitEndPoint(accountName, 0f);
+            var account = new Account(accountName, AccountType.Credit, 0f, balanceAmount);
+            var scenario = new Scenario("Amortisation Schedule", new List<Account> { account }, mutators, new List<IEndPoint> { ep }, pattern);
+            
+            // Execute
+            var results = scenario.Execute().ToList();
+            vm.PublishMessages = results;
+            
+    }
 }

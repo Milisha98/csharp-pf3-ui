@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using PF3.Models;
+
 namespace PF3_UI.Mortgage
 {
     public class ViewModel
@@ -48,6 +51,8 @@ namespace PF3_UI.Mortgage
             set => model.ActualRepayment = value.ToDecimal();
         }
 
+        public IEnumerable<PublishMessage> PublishMessages { get; set; }
+
         private bool IsRepaymentError => 
             model.ActualRepayment > 0m && 
             (this.RequiredRepayment ?? 0m) > model.ActualRepayment;
@@ -55,6 +60,8 @@ namespace PF3_UI.Mortgage
         public string RepaymentWarningClass => 
             IsRepaymentError ? "danger" : "warning";
 
+
+        public Model Model => model;
 
         //
         // Helpers
