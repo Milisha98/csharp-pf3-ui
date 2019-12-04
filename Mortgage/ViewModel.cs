@@ -78,7 +78,7 @@ namespace PF3_UI.Mortgage
 
         public IEnumerable<PublishMessage> BalanceResults { get; private set; }
 
-
+        public List<List<PublishMessage>> PrincipleInterestResults { get; private set; }
 
         //
         // Methods
@@ -114,7 +114,10 @@ namespace PF3_UI.Mortgage
             var balancePublisher = new PF3.Publishing.PublishBalance();
             var piPublisher = new PF3.Publishing.PublishPrincipleVsInterest();
 
-            BalanceResults = balancePublisher.CreateColumns(results, PF3.Enums.Period.Year).First();
+            // Display in the Output
+            BalanceResults = balancePublisher.CreateColumns(results, PF3.Enums.Period.Year).First();            
+
+            PrincipleInterestResults = piPublisher.CreateColumns(results, PF3.Enums.Period.Month).Pivot();
 
         }
 

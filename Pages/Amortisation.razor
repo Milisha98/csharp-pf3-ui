@@ -74,6 +74,10 @@
 <!-- Balance -->
 @if (vm.ShowBalancePanel)
 {
+    <div class="row">
+        <div class="col-sm-1"><strong>Year</strong></div>
+        <div class="col-sm-1"><strong>Balance</strong></div>
+    </div>    
     @foreach (var row in vm.BalanceResults)
     {
         <div class="row">
@@ -86,7 +90,22 @@ else
 {
 
 <!-- Princicple & Interest -->
+    <div class="row">
+        <div class="col-sm-1"><strong>Month</strong></div>
+        <div class="col-sm-1"><strong>Principle</strong></div>
+        <div class="col-sm-1"><strong>Interest</strong></div>
+    </div>
 
+    @foreach (var row in vm.PrincipleInterestResults)
+    {
+        <div class="row">
+            <div class="col-sm-1"><small>@(row.First().When.ToString("MMM yyyy"))</small></div>
+        @foreach (var column in row)
+        {            
+            <div class="col-sm-1"><small>@(column.Balance.ToString("c"))</small></div>
+        }
+        </div>
+    }
 
 }
 </div>
