@@ -1,5 +1,6 @@
 /bin
 /obj
+bin/debug
 elm.js
 .ionide/symbolCache.db
 db.lock
