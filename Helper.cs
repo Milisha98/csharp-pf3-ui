@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using PF3.Models;
+using PF3_UI.Mortgage;
 
 namespace PF3_UI
 {
@@ -21,7 +22,26 @@ namespace PF3_UI
                       .Select(r => r.Select(c => c.item).ToList())
                       .ToList();
             
-        }        
+        }
+
+        public static List<PIItem> ToPiItems(this List<List<PublishMessage>> raw)
+        {
+            var results = new List<PIItem>();            
+            foreach (var row in raw)
+            {
+                var principle = row.First();
+                var interest = row.Last();
+
+                var item = new PIItem
+                { When = principle.When,
+                  Principle = principle.Balance,
+                  Interest = interest.Balance
+                };
+                results.Add(item);
+
+            }
+            return results;
+        }
     }
 
 
