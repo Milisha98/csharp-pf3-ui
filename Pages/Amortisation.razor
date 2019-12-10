@@ -70,6 +70,14 @@
     <div class="row">
         <div class="col-sm"><p class="lead">The end date is @(vm.EndDate) (i.e. in @(vm.EndDateInPlainEnglish))</p></div>        
     </div>
+    <div class="row">
+        <div class="col-sm"><p class="lead">Total Interest Paid: @(vm.OriginalTotalInterest)</p></div>
+        @if (vm.ShowNewInterest)
+        {
+            <div class="col-sm"><p class="lead">After contributions you save @(vm.TotalInterestDiff) in interest</p></div>
+        }
+    </div>
+
 
 <!-- Balance -->
 @if (vm.ShowBalancePanel)

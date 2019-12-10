@@ -9,7 +9,10 @@ namespace PF3_UI.Mortgage
         public int Term { get; set; } = 25;
         public decimal ActualRepayment { get; set; }
         public Period PaymentPeriod { get; set; } = Period.Monthly;
-        public DateTime? EndDate { get; set; }
+        public DateTime? OriginalEndDate { get; set; }
+        public float OriginalTotalInterest { get; set; }
+        public DateTime? NewEndDate { get; set; }
+        public float NewTotalInterest { get; set; }
     }
 
     public enum Period
