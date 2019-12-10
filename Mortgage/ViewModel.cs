@@ -11,6 +11,7 @@ namespace PF3_UI.Mortgage
 {
     public class ViewModel
     {
+        const string AccountName = "Mortgage";
         private Model model = new Model();          
 
         public string Balance
@@ -66,6 +67,7 @@ namespace PF3_UI.Mortgage
         public Model Model => model;
 
 
+
         // 
         // User Interface
         //
@@ -78,32 +80,74 @@ namespace PF3_UI.Mortgage
 
         public IEnumerable<PublishMessage> BalanceResults { get; private set; }
 
-        public List<PIItem> PrincipleInterestResults { get; private set; }
+        private List<PIItem> _principleInterestResults;
+        public List<PIItem> PrincipleInterestResults 
+        { get => _principleInterestResults ?? new List<PIItem>(); 
+          set
+          {
+              Console.WriteLine("VM.PrincipleInterestResults.Set");
+              _principleInterestResults = value;
+
+              Console.WriteLine("OneOffPayments:" + OneOffPayments.Count());
+          } 
+        }
+
+        public List<FixedDebitMutator> OneOffPayments
+        {
+            get
+            {
+                // Add One-Off Payments
+                var debits = _principleInterestResults.Where(x => x.ExtraPayment.ToDecimal() != 0m)
+                                .Select(x => new FixedDebitMutator("One-Off", AccountName, new OneOffPeriod(),x.When,x.When,(float)x.ExtraPayment.ToDecimal(), 10,TransactionType.Contribution))
+                                .ToList();
+
+                return debits;             
+            }
+        }
 
         //
         // Methods
         //
         
-        public void Calculate()
+        public void UpdatePrincipleInterestResult(PIItem item)
+        {
+           
+            // Update the Principle Interest Results
+            var results = new  List<PIItem>();
+            foreach (var result in PrincipleInterestResults)
+            {
+                if (result.When == item.When)
+                    results.Add(item);
+                else
+                    results.Add(result);
+            }
+            PrincipleInterestResults = results;
+            
+        }
+
+        private void Calculate()
         {
             if (!AllowCalculation) return;
 
             var balanceAmount = (float)model.Balance;
             var repaymentAmount = (float)model.ActualRepayment;
             var interestRate = (float)model.Interest / 100f;
-            var accountName = "Mortgage";
 
             ITime period = MapPeriod();
 
             // Patterns
-            var interest = new PercentCreditMutator("Interest", accountName, new DayPeriod(), DateTime.Today, DateTime.MaxValue, (interestRate / 365f), 10, TransactionType.Interest);
-            var repayment = new FixedDebitMutator("Repayment", accountName, period, DateTime.Today, DateTime.MaxValue, repaymentAmount, 5, TransactionType.Payment);
+            var interest = new PercentCreditMutator("Interest", AccountName, new DayPeriod(), DateTime.Today, DateTime.MaxValue, (interestRate / 365f), 10, TransactionType.Interest);
+            var repayment = new FixedDebitMutator("Repayment", AccountName, period, DateTime.Today, DateTime.MaxValue, repaymentAmount, 5, TransactionType.Payment);
             var mutators = new List<IMutator> { interest, repayment };
+
+            // TODO: If there are one-off payments, then create two scenarios
+            // Add any one-off payments
+            // if (OneOffPayments != null && !OneOffPayments.Any()) mutators.AddRange(OneOffPayments);
 
             // Construct Entities
             var pattern = new PublishPattern(new MonthPeriod(), DateTime.Now);
-            var ep = new DebitEndPoint(accountName, 0f);
-            var account = new Account(accountName, AccountType.Credit, 0f, balanceAmount);
+            var ep = new DebitEndPoint(AccountName, 0f);
+            var account = new Account(AccountName, AccountType.Credit, 0f, balanceAmount);
             var scenario = new Scenario("Amortisation Schedule", new List<Account> { account }, mutators, new List<IEndPoint> { ep }, pattern);
 
             // Execute
@@ -117,9 +161,9 @@ namespace PF3_UI.Mortgage
             // Display in the Output
             BalanceResults = balancePublisher.CreateColumns(results, PF3.Enums.Period.Year).First();            
 
-            PrincipleInterestResults = piPublisher.CreateColumns(results, PF3.Enums.Period.Month)
-                                                  .Pivot()
-                                                  .ToPiItems();
+            _principleInterestResults = piPublisher.CreateColumns(results, PF3.Enums.Period.Month)
+                                                   .Pivot()
+                                                   .ToPiItems();
 
         }
 

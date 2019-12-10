@@ -94,14 +94,16 @@ else
         <div class="col-sm-1"><strong>Month</strong></div>
         <div class="col-sm-1"><strong>Principle</strong></div>
         <div class="col-sm-1"><strong>Interest</strong></div>
+        <div class="col-sm-1"><strong>Contribution</strong></div>
     </div>
 
     @foreach (var row in vm.PrincipleInterestResults)
     {
         <div class="row">
             <div class="col-sm-1"><small>@(row.When.ToString("MMM yyyy"))</small></div>
-            <div class='col-sm-1 @(row.BackgroundColor)'><small>@(row.EditPrinciple)</small></div>
+            <div class="col-sm-1 @(row.BackgroundColor)"><small>@(row.Total.ToString("c"))</small></div>
             <div class="col-sm-1"><small>@(row.Interest.ToString("c"))</small></div>
+            <input type='text' @bind:event="oninput" @bind="@row.ExtraPayment" @onchange="@(() => vm.UpdatePrincipleInterestResult(row))" class='col-sm-1' />
         </div>
     }
 

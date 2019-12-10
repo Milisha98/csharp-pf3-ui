@@ -10,25 +10,26 @@ namespace PF3_UI.Mortgage
 
         public float Interest { get; set; }
 
-        private decimal? _editPrinciple;
-        public string EditPrinciple
-        {
-            get => (_editPrinciple ?? (decimal)Principle).ToString("c0");
-            set
-            {
-                _editPrinciple = value.ToDecimal();
-            }
-        }
-
         public string BackgroundColor
         {
             get
             {
-                if (Principle > Interest) return "bg-success";
-                if (Principle < Interest) return "bg-danger";
+                if (Total > (decimal)Interest) return "bg-success";
+                if (Total < (decimal)Interest) return "bg-danger";
                 return "bg-light";
             }
         }
 
+        private Decimal _extraPayment = 0m;
+        public string ExtraPayment 
+        { 
+            get => _extraPayment.ToString("c0");
+            set
+            {
+                _extraPayment = value.ToDecimal();
+            }
+        }
+
+        public decimal Total => (decimal)Principle + _extraPayment;
     }
 }
