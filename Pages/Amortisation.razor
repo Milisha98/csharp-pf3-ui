@@ -1,5 +1,7 @@
-@page "/amortisation"
+@page "/"
+@inject IJSRuntime JsRuntime;
 @using PF3_UI.Mortgage;
+
 
 <h1>Amortisation</h1>
 
@@ -38,7 +40,7 @@
 {
 <div class="row">
     <label for="txtBalance" class="col-sm-2">Actual Repayment</label>
-    <input id="txtBalance" type="text" class="col-sm-1" style="height: 32px" @bind:event="oninput" @bind="@vm.ActualRepayment" />
+    <input id="txtBalance" type="text" class="col-sm-1" style="height: 32px" @bind:event="oninput" @bind="@vm.ActualRepayment" @onchange="@DisplayChart" />
     <div class="col-sm-1"></div>
     @if (vm.RequiredRepayment.HasValue)
     {
@@ -57,7 +59,7 @@
 
 <!-- Toggle Buttons -->
 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-    <label class='btn btn-secondary @(vm.ShowBalancePanel ? "active" : "")' @onclick="@(_ => vm.ShowBalancePanel = true)">
+    <label class='btn btn-secondary @(vm.ShowBalancePanel ? "active" : "")' @onclick="@(_ => { vm.ShowBalancePanel = true; DisplayChart(); })">
         <input type="radio" name="options" id="optBalance" autocomplete="off" checked=@vm.ShowBalancePanel > Balance
     </label>
     <label class='btn btn-secondary @(vm.ShowBalancePanel ? "" : "active")' @onclick="@(_ => vm.ShowBalancePanel = false)">
@@ -82,17 +84,27 @@
 <!-- Balance -->
 @if (vm.ShowBalancePanel)
 {
-    <div class="row">
-        <div class="col-sm-1"><strong>Year</strong></div>
-        <div class="col-sm-1"><strong>Balance</strong></div>
-    </div>    
-    @foreach (var row in vm.BalanceResults)
-    {
+    <div class="container">
         <div class="row">
-            <div class="col-sm-1"><small>@(row.When.ToString("yyyy"))</small></div>
-            <div class="col-sm-1"><small class="text-right">@(row.Balance.ToString("c"))</small></div>
-        </div>
-    }
+            <div class="col-sm">
+                <div class="row">
+                    <div class="col-sm-1"><strong>Year</strong></div>
+                    <div class="col-sm-1"><strong>Balance</strong></div>
+                </div>    
+                @foreach (var row in vm.BalanceResults)
+                {
+                    <div class="row">
+                        <div class="col-sm-1"><small>@(row.When.ToString("yyyy"))</small></div>
+                        <div class="col-sm-1"><small class="text-right">@(row.Balance.ToString("c"))</small></div>
+                    </div>
+                }
+            </div>
+            <div class="col-sm">
+                <canvas id="balanceChart" width="600px" height="400px"></canvas>
+            </div>
+        </div>        
+    </div>
+    
 }
 else
 {
@@ -122,4 +134,12 @@ else
 
 @code {
     private ViewModel vm = new ViewModel();
+
+    public async void DisplayChart()
+    {
+        if (vm.ShowChart)
+        {
+            await JsRuntime.InvokeVoidAsync("chartBalance", new object[] { vm.XAxis, vm.Data });
+        }
+    }
 }

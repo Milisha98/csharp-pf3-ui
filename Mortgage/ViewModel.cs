@@ -106,47 +106,13 @@ namespace PF3_UI.Mortgage
         }
 
 
-        private Scenario OriginalScenario
-        {
-            get
-            {
-                var balanceAmount = (float)model.Balance;
-                var repaymentAmount = (float)model.ActualRepayment;
-                var interestRate = (float)model.Interest / 100f;
 
-                ITime period = MapPeriod();
-
-                // Patterns
-                var interest = new PercentCreditMutator("Interest", AccountName, new DayPeriod(), DateTime.Today, DateTime.MaxValue, (interestRate / 365f), 10, TransactionType.Interest);
-                var repayment = new FixedDebitMutator("Repayment", AccountName, period, DateTime.Today, DateTime.MaxValue, repaymentAmount, 5, TransactionType.Payment);
-                var mutators = new List<IMutator> { interest, repayment };
-
-                // Construct Entities
-                var pattern = new PublishPattern(new MonthPeriod(), DateTime.Now);
-                var ep = new DebitEndPoint(AccountName, 0f);
-                var account = new Account(AccountName, AccountType.Credit, 0f, balanceAmount);
-                var scenario = new Scenario("Amortisation Schedule", new List<Account> { account }, mutators, new List<IEndPoint> { ep }, pattern);
-
-                return scenario;
-            }
-        }
-
-        private Scenario NewScenario
-        {
-            get
-            {
-                if (!OneOffPayments.Any()) return null;
-
-                var s = OriginalScenario;
-                
-                // Add any one-off payments
-                var mutators = s.Mutators.ToList();
-                mutators.AddRange(OneOffPayments);
-                s.Mutators = mutators;
-
-                return s;
-            }
-        }
+        //
+        // Charting
+        //
+        public string[] XAxis => BalanceResults.Select(x => x.When.ToString("yyyy")).ToArray();
+        public int[] Data => BalanceResults.Select(x => (int)x.Balance).ToArray();
+        public bool ShowChart => (BalanceResults != null) && BalanceResults.Any();
 
 
 
@@ -187,7 +153,9 @@ namespace PF3_UI.Mortgage
             var piPublisher = new PF3.Publishing.PublishPrincipleVsInterest();
 
             // Display in the Output
-            BalanceResults = balancePublisher.CreateColumns(results, PF3.Enums.Period.Year).First();            
+            var output = balancePublisher.CreateColumns(results, PF3.Enums.Period.Year).First();
+            BalanceResults = output;
+            
 
             _principleInterestResults = piPublisher.CreateColumns(results, PF3.Enums.Period.Month)
                                                    .Pivot()
@@ -255,6 +223,49 @@ namespace PF3_UI.Mortgage
 
             return period;
         }        
+
+
+        private Scenario OriginalScenario
+        {
+            get
+            {
+                var balanceAmount = (float)model.Balance;
+                var repaymentAmount = (float)model.ActualRepayment;
+                var interestRate = (float)model.Interest / 100f;
+
+                ITime period = MapPeriod();
+
+                // Patterns
+                var interest = new PercentCreditMutator("Interest", AccountName, new DayPeriod(), DateTime.Today, DateTime.MaxValue, (interestRate / 365f), 10, TransactionType.Interest);
+                var repayment = new FixedDebitMutator("Repayment", AccountName, period, DateTime.Today, DateTime.MaxValue, repaymentAmount, 5, TransactionType.Payment);
+                var mutators = new List<IMutator> { interest, repayment };
+
+                // Construct Entities
+                var pattern = new PublishPattern(new MonthPeriod(), DateTime.Now);
+                var ep = new DebitEndPoint(AccountName, 0f);
+                var account = new Account(AccountName, AccountType.Credit, 0f, balanceAmount);
+                var scenario = new Scenario("Amortisation Schedule", new List<Account> { account }, mutators, new List<IEndPoint> { ep }, pattern);
+
+                return scenario;
+            }
+        }
+
+        private Scenario NewScenario
+        {
+            get
+            {
+                if (!OneOffPayments.Any()) return null;
+
+                var s = OriginalScenario;
+                
+                // Add any one-off payments
+                var mutators = s.Mutators.ToList();
+                mutators.AddRange(OneOffPayments);
+                s.Mutators = mutators;
+
+                return s;
+            }
+        }
 
     }
 }
