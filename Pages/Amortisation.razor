@@ -1,13 +1,13 @@
 @page "/"
-@inject IJSRuntime JsRuntime;
-@using PF3_UI.Mortgage;
 
+@using PF3_UI.Mortgage;
+@using PF3_UI.Components;
 
 <h1>Amortisation</h1>
 
 <div class="row">
     <label for="txtBalance" class="col-sm-2">Balance</label>
-    <input id="txtBalance" type="text" class="col-sm-2" @bind:event="oninput" @bind="@vm.Balance" />
+    <input id="txtBalance" type="text" class="col-sm-2" @bind:event="oninput" @bind="@vm.Balance" />    
 </div>
 
 <div class="row">
@@ -40,7 +40,7 @@
 {
 <div class="row">
     <label for="txtBalance" class="col-sm-2">Actual Repayment</label>
-    <input id="txtBalance" type="text" class="col-sm-1" style="height: 32px" @bind:event="oninput" @bind="@vm.ActualRepayment" @onchange="@DisplayChart" />
+    <input id="txtBalance" type="text" class="col-sm-1" style="height: 32px" @bind:event="oninput" @bind="@vm.ActualRepayment" />
     <div class="col-sm-1"></div>
     @if (vm.RequiredRepayment.HasValue)
     {
@@ -59,12 +59,15 @@
 
 <!-- Toggle Buttons -->
 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-    <label class='btn btn-secondary @(vm.ShowBalancePanel ? "active" : "")' @onclick="@(_ => { vm.ShowBalancePanel = true; DisplayChart(); })">
-        <input type="radio" name="options" id="optBalance" autocomplete="off" checked=@vm.ShowBalancePanel > Balance
+    <label class='btn btn-secondary @((vm.Pane == Pane.Balance) ? "active" : "")' @onclick="@(() => vm.Pane = Pane.Balance)">
+        <input type="radio" name="options" id="optBalance" autocomplete="off" checked=@(vm.Pane == Pane.Balance)> Balance
     </label>
-    <label class='btn btn-secondary @(vm.ShowBalancePanel ? "" : "active")' @onclick="@(_ => vm.ShowBalancePanel = false)">
-        <input type="radio" name="options" id="optBalance" autocomplete="off" checked=@(!vm.ShowBalancePanel)> Principle &amp; Interest
+    <label class='btn btn-secondary  @((vm.Pane == Pane.PrincipleInterest) ? "active" : "")' @onclick="@(() => vm.Pane = Pane.PrincipleInterest)">
+        <input type="radio" name="options" id="optPI" autocomplete="off" checked=@(vm.Pane == Pane.PrincipleInterest)> Principle &amp; Interest
     </label>
+    <label class='btn btn-secondary  @((vm.Pane == Pane.Chart) ? "active" : "")' @onclick="@(() => vm.Pane = Pane.Chart)">
+        <input type="radio" name="options" id="optChart" autocomplete="off" checked=@(vm.Pane == Pane.Chart)> Chart
+    </label>    
 </div>
 
 <!-- Results Pane -->
@@ -82,7 +85,7 @@
 
 
 <!-- Balance -->
-@if (vm.ShowBalancePanel)
+@if (vm.Pane == Pane.Balance)
 {
     <div class="container">
         <div class="row">
@@ -99,17 +102,14 @@
                     </div>
                 }
             </div>
-            <div class="col-sm">
-                <canvas id="balanceChart" width="600px" height="400px"></canvas>
-            </div>
         </div>        
     </div>
     
 }
-else
-{
 
-<!-- Princicple & Interest -->
+@if (vm.Pane == Pane.PrincipleInterest)
+{
+    <!-- Princicple & Interest -->
     <div class="row">
         <div class="col-sm-1"><strong>Month</strong></div>
         <div class="col-sm-1"><strong>Principle</strong></div>
@@ -128,18 +128,16 @@ else
     }
 
 }
+
+@if (vm.Pane == Pane.Chart)
+{
+    <BalanceChart Data="@vm.BalanceResults" />
+}
+
 </div>
 
 }
 
 @code {
     private ViewModel vm = new ViewModel();
-
-    public async void DisplayChart()
-    {
-        if (vm.ShowChart)
-        {
-            await JsRuntime.InvokeVoidAsync("chartBalance", new object[] { vm.XAxis, vm.Data });
-        }
-    }
 }

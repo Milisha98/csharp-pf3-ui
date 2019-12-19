@@ -80,11 +80,9 @@ namespace PF3_UI.Mortgage
 
         public string RepaymentWarningClass => IsRepaymentError ? "danger" : "success";
 
+        public Pane Pane { get; set; }
 
-        public bool ShowBalancePanel { get; set; } = true;        
-
-
-        public IEnumerable<PublishMessage> BalanceResults { get; private set; }
+        public IList<PublishMessage> BalanceResults { get; private set; }
 
         private List<PIItem> _principleInterestResults;
         public List<PIItem> PrincipleInterestResults 
@@ -104,16 +102,6 @@ namespace PF3_UI.Mortgage
                 return debits;             
             }
         }
-
-
-
-        //
-        // Charting
-        //
-        public string[] XAxis => BalanceResults.Select(x => x.When.ToString("yyyy")).ToArray();
-        public int[] Data => BalanceResults.Select(x => (int)x.Balance).ToArray();
-        public bool ShowChart => (BalanceResults != null) && BalanceResults.Any();
-
 
 
         //
@@ -154,8 +142,8 @@ namespace PF3_UI.Mortgage
 
             // Display in the Output
             var output = balancePublisher.CreateColumns(results, PF3.Enums.Period.Year).First();
-            BalanceResults = output;
-            
+            BalanceResults = output.ToList();
+          
 
             _principleInterestResults = piPublisher.CreateColumns(results, PF3.Enums.Period.Month)
                                                    .Pivot()
@@ -266,6 +254,14 @@ namespace PF3_UI.Mortgage
                 return s;
             }
         }
+
+    }
+
+    public enum Pane
+    {
+        Balance,
+        PrincipleInterest,
+        Chart
 
     }
 }

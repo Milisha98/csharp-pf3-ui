@@ -1,9 +1,32 @@
-<input id="@id" type="text" class="@Class" style="@Style" @bind:event="oninput" @bind="@Amount" @onchange="@OnChange" />
+<input id="@id" type="text" class="@Class" style="@Style" @bind:event="oninput" @bind="@Text" @onchange="@OnChange" />
 
 @code {
 
+    private string _text = 0.ToString("c0");
+    private decimal _amount = 0m;
+
     [Parameter]
-    public decimal Amount { get; set; } = 0m;
+    public string Text
+    {
+        get => _text;
+        set
+        {
+            _text = value;
+            _amount = value.ToDecimal();
+        }
+    }
+    
+    [Parameter]    
+    public decimal Amount
+    {
+        get => _amount;
+        set
+        {
+            _amount = value;
+            _text = value.ToString("c0");
+        }
+        
+    }
 
     [Parameter]
     public string id { get; set; } = "";

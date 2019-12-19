@@ -1,0 +1,42 @@
+@inject IJSRuntime JsRuntime;
+@using PF3.Models;
+
+<canvas id="balanceChart" width="600px" height="400px"></canvas>
+
+@code {
+    private IList<PublishMessage> _data = null;
+
+    [Parameter]
+    public IList<PublishMessage> Data
+    {
+        get => _data;
+        set
+        {
+            _data = value;
+            DisplayChart();
+        }
+    }
+
+    // Private Properties
+    private bool Visible => (_data != null) && (_data.Any());
+    private string[] XAxis => Data.Select(x => x.When.ToString("yyyy")).ToArray();
+    private int[] Values => Data.Select(x => (int)x.Balance).ToArray();
+
+    // Methods
+    public async void DisplayChart()
+    {
+        try
+        {
+            if (Visible)
+            {
+                await JsRuntime.InvokeVoidAsync("chartBalance", new object[] { XAxis, Values });
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("An error occured displaying the chart: " + ex.Message);
+        }
+
+    }
+
+}
