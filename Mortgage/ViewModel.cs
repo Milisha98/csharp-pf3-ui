@@ -16,7 +16,7 @@ namespace PF3_UI.Mortgage
 
         public string Balance
         {
-            get => model.Balance.ToString("c0");
+            get => model.Balance.ToString("c");
             set => model.Balance = value.ToDecimal();
         }
 
