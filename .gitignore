@@ -6,3 +6,7 @@ elm.js
 .ionide/symbolCache.db
 db.lock
 storage.ide
+/.vs/PF3-UI/DesignTimeBuild
+/.vs/PF3-UI/v16/TestStore/0
+/.vs/PF3-UI/v16
+/.vs/PF3-UI/config

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using PF3.EndPoints;
+using PF3.Builders;
 using PF3.Enums;
 using PF3.Models;
-using PF3.Mutators;
+using PF3.Transfers;
 using PF3.Time;
+using PF3.Triggers;
 
 namespace PF3_UI.Mortgage
 {
@@ -16,13 +17,16 @@ namespace PF3_UI.Mortgage
 
         public string Balance
         {
-            get => model.Balance.ToString("c");
-            set => model.Balance = value.ToDecimal();
+            get => $"{model.Balance:C0}";
+            set
+            {
+                model.Balance = value.ToDecimal();
+            }
         }
 
         public string Interest
         {
-            get => $"{model.Interest.ToString("0.00")}%";
+            get => $"{model.Interest:0.00}%";
             set => model.Interest = value.ToDecimal();
         }
 
@@ -90,13 +94,13 @@ namespace PF3_UI.Mortgage
           set => _principleInterestResults = value;
         }
 
-        public List<FixedDebitMutator> OneOffPayments
+        public List<FixedDebitTransfer> OneOffPayments
         {
             get
             {
                 // Add One-Off Payments
                 var debits = PrincipleInterestResults.Where(x => x.ExtraPayment.ToDecimal() != 0m)
-                                .Select(x => new FixedDebitMutator("One-Off", AccountName, new OneOffPeriod(),x.When,x.When,(float)x.ExtraPayment.ToDecimal(), 10,TransactionType.Contribution))
+                                .Select(x => new FixedDebitTransfer("One-Off", null, AccountName, new OneOffPeriod(),x.When,x.When,(float)x.ExtraPayment.ToDecimal(), 10, TransactionType.Payment))
                                 .ToList();
 
                 return debits;             
@@ -219,21 +223,25 @@ namespace PF3_UI.Mortgage
             {
                 var balanceAmount = (float)model.Balance;
                 var repaymentAmount = (float)model.ActualRepayment;
-                var interestRate = (float)model.Interest / 100f;
+                var interestRate = (float)model.Interest / 100f;                
 
                 ITime period = MapPeriod();
 
-                // Patterns
-                var interest = new PercentCreditMutator("Interest", AccountName, new DayPeriod(), DateTime.Today, DateTime.MaxValue, (interestRate / 365f), 10, TransactionType.Interest);
-                var repayment = new FixedDebitMutator("Repayment", AccountName, period, DateTime.Today, DateTime.MaxValue, repaymentAmount, 5, TransactionType.Payment);
-                var mutators = new List<IMutator> { interest, repayment };
+                // Home Loan Account
+                var homeLoanAccount = PF3.Builders.Builder
+                    .NewAccount(AccountName, Side.Credit)
+                    .OpeningBalance(balanceAmount)
+                    .InterestRate(interestRate)
+                    .Payment(repaymentAmount, period);
 
-                // Construct Entities
-                var pattern = new PublishPattern(new MonthPeriod(), DateTime.Now);
-                var ep = new DebitEndPoint(AccountName, 0f);
-                var account = new Account(AccountName, AccountType.Credit, 0f, balanceAmount);
-                var scenario = new Scenario("Amortisation Schedule", new List<Account> { account }, mutators, new List<IEndPoint> { ep }, pattern);
+                var ep = new IsGreaterThanOrEqualToTrigger(AccountName, 0f);
 
+                // Create the Scenario
+                var scenario = new Scenario("Amortisation Schedule")
+                                .WithAccount(homeLoanAccount)
+                                .Until(ep)
+                                .Publish(Every.Month);
+ 
                 return scenario;
             }
         }
@@ -247,9 +255,9 @@ namespace PF3_UI.Mortgage
                 var s = OriginalScenario;
                 
                 // Add any one-off payments
-                var mutators = s.Mutators.ToList();
-                mutators.AddRange(OneOffPayments);
-                s.Mutators = mutators;
+                var transfers = s.Transfers.ToList();
+                transfers.AddRange(OneOffPayments);
+                s.Transfers = transfers;
 
                 return s;
             }
